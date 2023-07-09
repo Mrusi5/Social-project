@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    container_name: db_postgres
+    env_file:
+      - .env  
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app_net
+  
+  web:
+    build: .
+    container_name: app_social
+    command: ["/app/docker/app.sh"]
+    ports:
+      - "8000:8080"
+    depends_on:
+      - postgres
+    networks:
+      - app_net  
+    env_file:
+      - .env       
+volumes:
+  db-data: 
+networks:
+  app_net:
